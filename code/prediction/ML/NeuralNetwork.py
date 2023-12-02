@@ -26,9 +26,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 class NeuralNetwork:
-    @staticmethod
-    def regress(dataFrame, alphaToUse, hiddenLayerSize, activationToUse, solverToUse, test_size, target_col, is_fixed=False, print_results=True):
-        X_train, X_test, y_train, y_test = NeuralNetwork.split_test_data(dataFrame, test_size, target_col, is_fixed)      
+    def __init__(self):
+        pass
+    
+    def regress(self, dataFrame, alphaToUse, hiddenLayerSize, activationToUse, solverToUse, test_size, target_col, is_fixed=False, print_results=True):
+        self.y_actual = dataFrame[target_col]
+        X_train, X_test, y_train, y_test = self.split_test_data(dataFrame, test_size, target_col, is_fixed)      
         scaler = StandardScaler()
         scaler.fit(X_train)
         X_train = scaler.transform(X_train)
@@ -36,20 +39,19 @@ class NeuralNetwork:
 
         mlp = MLPRegressor(activation=activationToUse, hidden_layer_sizes=hiddenLayerSize, solver=solverToUse, alpha=alphaToUse, learning_rate_init=.03, early_stopping=True, max_iter=1000)
         mlp_model = mlp.fit(X_train, y_train)                                                          
-        mlp_predictions = mlp_model.predict(X_test)                                                    
-        mse = metrics.mean_squared_error(y_test, mlp_predictions)
-        r2 = metrics.r2_score(y_test, mlp_predictions)
+        self.mlp_predictions = mlp_model.predict(X_test)                                                    
+        mse = metrics.mean_squared_error(y_test, self.mlp_predictions)
+        r2 = metrics.r2_score(y_test, self.mlp_predictions)
         
         # After fitting the model, store the loss curve
-        NeuralNetwork.loss_curve = mlp_model.loss_curve_
+        self.loss_curve = mlp_model.loss_curve_
 
         if(print_results):
-            NeuralNetwork.print_stats(alphaToUse, solverToUse, hiddenLayerSize, activationToUse, test_size, is_fixed, y_test, mlp_predictions)
+            self.print_stats(alphaToUse, solverToUse, hiddenLayerSize, activationToUse, test_size, is_fixed, y_test, self.mlp_predictions)
 
         return [mse, r2]
 
-    @staticmethod
-    def split_test_data(dataFrame, test_size, target_col, is_fixed=False):
+    def split_test_data(self, dataFrame, test_size, target_col, is_fixed=False):
         X = dataFrame.drop(columns=[target_col])
         Y = dataFrame[target_col]
         if is_fixed:    
@@ -59,8 +61,7 @@ class NeuralNetwork:
 
         return X_train, X_test, y_train, y_test
 
-    @staticmethod
-    def print_stats(Alpha, solverToUse, hiddenLayerSize, activation, test_size, is_fixed, y_test, mlp_predictions):
+    def print_stats(self, Alpha, solverToUse, hiddenLayerSize, activation, test_size, is_fixed, y_test, mlp_predictions):
         print(f"""The results for NN with settings:
                 Solver: {solverToUse}
                 Activation: {activation}
@@ -73,14 +74,13 @@ class NeuralNetwork:
                 R2 Score: {metrics.r2_score(y_test, mlp_predictions)}
                 """)
 
-    @staticmethod
-    def plot_loss_curve():
+    def plot_loss_curve(self):
         """
         Plots the loss curve of the neural network model.
         """
-        if hasattr(NeuralNetwork, 'loss_curve'):
+        if hasattr(self, 'loss_curve'):
             plt.figure(figsize=(8, 6))
-            plt.plot(NeuralNetwork.loss_curve, label='Loss Curve')
+            plt.plot(self.loss_curve, label='Loss Curve')
             plt.title('Loss Curve of Neural Network')
             plt.xlabel('Iterations')
             plt.ylabel('Loss')
@@ -89,3 +89,20 @@ class NeuralNetwork:
             plt.show()
         else:
             print("No loss curve data available. Train the model first.")
+            
+    def plot_actual_vs_predicted(self):
+        """
+        Plots actual vs. predicted values to evaluate the performance of the neural network model.
+
+        Args:
+            y_actual (array-like): The actual target values.
+            y_predicted (array-like): The predicted target values by the model.
+        """
+        plt.figure(figsize=(8, 6))
+        plt.scatter(self.y_actual, self.mlp_predictions, alpha=0.5)
+        plt.title('Actual vs. Predicted Values')
+        plt.xlabel('Actual Values')
+        plt.ylabel('Predicted Values')
+        plt.plot([self.y_actual.min(), self.y_actual.max()], [self.y_actual.min(), self.y_actual.max()], 'k--') # Ideal line
+        plt.grid(True)
+        plt.show()
