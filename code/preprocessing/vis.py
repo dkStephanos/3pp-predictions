@@ -71,3 +71,16 @@ def plot_shooting_summary(data_path='./data/shooting_stats_extended.csv'):
 
     plt.show()
 
+def plot_feature_importance(feature_info):
+    """
+    Plots the importance of features as determined by the RFE process.
+
+    Args:
+        feature_info (pd.DataFrame): A DataFrame with features, their rankings, and importances.
+    """
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=feature_info.sort_values(by='Importance', ascending=False))
+    plt.title('Feature Importances')
+    plt.xlabel('Importance')
+    plt.ylabel('Features')
+    plt.show()
