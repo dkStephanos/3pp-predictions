@@ -1,6 +1,4 @@
-import pandas as pd
-
-def add_net_avg_shooting_pct(data_path='./data/shooting_stats.csv'):
+def add_net_avg_shooting_pct(df):
     """
     Adds a column for net average shooting percentage for October-November data and saves the extended DataFrame.
 
@@ -18,16 +16,13 @@ def add_net_avg_shooting_pct(data_path='./data/shooting_stats.csv'):
     None: The function saves the extended DataFrame to a CSV file and does not return anything.
     """
 
-    # Read the data from the CSV file
-    df = pd.read_csv(data_path)
-
     # Calculating the net average shooting percentage for October-November
     shot_types = ['lwr_paint', 'upr_paint', 'mid', 'three_non_cnr', 'three_cnr', 'ft']
     df['net_avg_pct_oct_nov'] = sum(df[f'{shot}_pct_oct_nov'] * df[f'{shot}_shots_oct_nov'] for shot in shot_types) / df[[f'{shot}_shots_oct_nov' for shot in shot_types]].sum(axis=1)
 
     return df
 
-def add_true_shooting_percentage(data_path='./data/shooting_stats.csv'):
+def add_true_shooting_percentage(df):
     """
     Adds the True Shooting Percentage (TS%) to the shooting statistics.
 
@@ -45,9 +40,6 @@ def add_true_shooting_percentage(data_path='./data/shooting_stats.csv'):
     Returns:
     pd.DataFrame: The DataFrame with the added True Shooting Percentage column.
     """
-
-    # Read the data from the CSV file
-    df = pd.read_csv(data_path)
 
     # Calculating total attempts (sum of all shot attempts across different types)
     attempt_cols = ['lwr_paint_shots_oct_nov', 'upr_paint_shots_oct_nov', 'mid_shots_oct_nov', 
