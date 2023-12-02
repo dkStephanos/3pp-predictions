@@ -4,4 +4,4 @@ from .SklearnClf import SklearnClf
 class GaussianNB(SklearnClf):
     def __init__(self,):
         super().__init__(name="GaussianNB")
-        self.clf = naive_bayes.GaussianNB()
+        self.model = naive_bayes.GaussianNB()

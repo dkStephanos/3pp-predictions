@@ -10,7 +10,7 @@ class SklearnPredictor:
         self.min_max_scaler = preprocessing.MinMaxScaler()
 
     def get_model(self):
-        return self.clf
+        return self.model
 
     def set_data(self, df, target_col):
         self.X = df.drop(columns=[target_col])
@@ -23,8 +23,8 @@ class SklearnPredictor:
         X_train = self.min_max_scaler.fit_transform(X_train)
         X_test = self.min_max_scaler.transform(X_test)
         
-        self.clf.fit(X_train, y_train)
-        self.predictions = self.clf.predict(X_test)
+        self.model.fit(X_train, y_train)
+        self.predictions = self.model.predict(X_test)
 
     def split_test_data(self, test_size, is_fixed=False):
         if is_fixed:
@@ -53,7 +53,7 @@ class SklearnPredictor:
         train_sizes = [.1, .2, .3, .4, .5, .6, .7, .8, .9, 1.]
 
         train_sizes, train_scores, validation_scores = learning_curve(
-            self.clf, self.X, self.y, train_sizes=train_sizes, cv=5, scoring='neg_mean_squared_error', shuffle=True)
+            self.model, self.X, self.y, train_sizes=train_sizes, cv=5, scoring='neg_mean_squared_error', shuffle=True)
 
         train_scores_mean = -train_scores.mean(axis=1)
         validation_scores_mean = -validation_scores.mean(axis=1)
@@ -70,7 +70,7 @@ class SklearnPredictor:
     # Optional: Include if you need model-specific parameter tuning
     def get_validation_curve(self, param_name, param_range):
         train_scores, test_scores = validation_curve(
-            self.clf, self.X, self.y, param_name=param_name, param_range=param_range, scoring='neg_mean_squared_error', n_jobs=-1)
+            self.model, self.X, self.y, param_name=param_name, param_range=param_range, scoring='neg_mean_squared_error', n_jobs=-1)
 
         train_scores_mean = -np.mean(train_scores, axis=1)
         train_scores_std = np.std(train_scores, axis=1)
