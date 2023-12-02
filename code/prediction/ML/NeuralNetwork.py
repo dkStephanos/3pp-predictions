@@ -1,3 +1,24 @@
+"""
+File: NeuralNetwork.py
+Author: Koi Stephanos
+Date: 2023-12-02
+Description: 
+    Contains the implementation of a neural network model using scikit-learn's MLPRegressor.
+    This file is part of an analytical toolkit for predicting basketball players' performance metrics.
+
+Additional Notes:
+    - Utilizes MLPRegressor for regression tasks.
+    - Includes methods for preprocessing data, training the model, and evaluating performance.
+
+Modifications:
+    - None
+
+Copyright:
+    © 2023 Koi Stephanos. All rights reserved.
+    Unauthorized copying of this file, via any medium, is strictly prohibited.
+    Proprietary and confidential.
+"""
+
 from sklearn import metrics
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
