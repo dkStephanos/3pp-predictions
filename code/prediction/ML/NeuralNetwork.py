@@ -19,6 +19,7 @@ Copyright:
     Proprietary and confidential.
 """
 
+import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
@@ -38,6 +39,9 @@ class NeuralNetwork:
         mlp_predictions = mlp_model.predict(X_test)                                                    
         mse = metrics.mean_squared_error(y_test, mlp_predictions)
         r2 = metrics.r2_score(y_test, mlp_predictions)
+        
+        # After fitting the model, store the loss curve
+        NeuralNetwork.loss_curve = mlp_model.loss_curve_
 
         if(print_results):
             NeuralNetwork.print_stats(alphaToUse, solverToUse, hiddenLayerSize, activationToUse, test_size, is_fixed, y_test, mlp_predictions)
@@ -57,14 +61,31 @@ class NeuralNetwork:
 
     @staticmethod
     def print_stats(Alpha, solverToUse, hiddenLayerSize, activation, test_size, is_fixed, y_test, mlp_predictions):
-        print("\t The results for NN with settings: ")
-        print("\t Solver: " + solverToUse)
-        print("\t Activation: " + activation)
-        print("\t Alpha: " + str(Alpha))
-        print("\t Hidden Layer Dimensions: " + str(hiddenLayerSize))
-        print("\t Fixed seed: " + str(is_fixed))
-        print("\t Test Set Percentage: " + str(test_size))
-        print("\n\t are as follows: ")
+        print(f"""The results for NN with settings:
+                Solver: {solverToUse}
+                Activation: {activation}
+                Alpha: {str(Alpha)}
+                Hidden Layer Dimensions: {str(hiddenLayerSize)}
+                Fixed seed: {str(is_fixed)}
+                Test Set Percentage: {str(test_size)}
+                
+                MSE: {metrics.mean_squared_error(y_test, mlp_predictions)}
+                R2 Score: {metrics.r2_score(y_test, mlp_predictions)}
+                """)
 
-        print("\n    MSE: ", metrics.mean_squared_error(y_test, mlp_predictions))
-        print("\n    R2 Score: ", metrics.r2_score(y_test, mlp_predictions))
+    @staticmethod
+    def plot_loss_curve():
+        """
+        Plots the loss curve of the neural network model.
+        """
+        if hasattr(NeuralNetwork, 'loss_curve'):
+            plt.figure(figsize=(8, 6))
+            plt.plot(NeuralNetwork.loss_curve, label='Loss Curve')
+            plt.title('Loss Curve of Neural Network')
+            plt.xlabel('Iterations')
+            plt.ylabel('Loss')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+        else:
+            print("No loss curve data available. Train the model first.")
