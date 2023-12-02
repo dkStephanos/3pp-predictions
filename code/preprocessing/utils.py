@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-def normalize_shooting_stats(data_path='./data/shooting_stats.csv'):
+def normalize_shooting_stats(data_path='./data/shooting_stats_extended.csv', output_path='./data/shooting_stats_normalized.csv'):
     """
     Normalizes the shooting statistics data from a CSV file.
 
@@ -26,5 +26,8 @@ def normalize_shooting_stats(data_path='./data/shooting_stats.csv'):
     # Applying StandardScaler to the numerical columns
     scaler = StandardScaler()
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+
+    # Save the extended DataFrame to a new CSV file
+    df.to_csv(output_path, index=False)
 
     return df
