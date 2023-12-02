@@ -22,6 +22,6 @@ from sklearn import svm
 from .SklearnPredictor import SklearnPredictor
 
 class SVM(SklearnPredictor):
-    def __init__(self, C, kernel="poly"):
+    def __init__(self, kernel="poly", degree=3, gamma='scale', C=1.0, epsilon=.1):
         super().__init__(name="SVM")
-        self.model = svm.SVR(C=C, kernel=kernel)
+        self.model = svm.SVR(kernel=kernel, degree=degree, gamma=gamma, C=C, epsilon=epsilon)
