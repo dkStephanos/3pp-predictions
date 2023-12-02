@@ -1,7 +1,7 @@
-from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
-from .SklearnClf import SklearnClf
+from sklearn.tree import DecisionTreeClassifier
+from .SklearnPredictor import SklearnPredictor
 
-class DecisionTree(SklearnClf):
+class DecisionTree(SklearnPredictor):
     def __init__(self,criterion):
         super().__init__(name="DecisionTree")
         self.model = DecisionTreeClassifier(criterion=criterion)
