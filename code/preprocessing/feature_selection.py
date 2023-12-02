@@ -1,7 +1,8 @@
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import SelectFromModel
-from typing import Optional
-from code.preprocessing.utils import normalize_shooting_stats, project_cols
+from code.preprocessing.normalize import normalize_shooting_stats
+from code.constants import NUMERIC_COLS
+from code.utils import project_cols
 import pandas as pd
 
 def perform_feature_selection(
