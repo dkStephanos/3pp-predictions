@@ -20,6 +20,8 @@ The repository contains Jupyter notebooks which are the main drivers of the anal
   - **How to Run**: Similar to the Preprocessing notebook, run the cells in sequence to train models and generate performance metrics.
   - **Key Outputs**: Trained models, performance metrics (MSE, R² scores, etc.), visual plots depicting model learning and validation.
 
+Full previews of each ran notebook have been persistsed and pushed to the repo for review.
+
 ### Installation
 To set up your environment to run these notebooks, you will need Python installed along with the necessary libraries. You can install the dependencies using:
 
