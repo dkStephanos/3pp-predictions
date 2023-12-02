@@ -36,4 +36,4 @@ Statistical definitions and conceptual insights were referenced from NBA Stuffer
 ### Contributing
 Contributions to 3pp-predictions are welcome! Please submit in the form of pull-requests of the main branch.
 
-© 2023 Koi Stephanos. All Rights Reserved.
+**© 2023 Koi Stephanos. All Rights Reserved.**
