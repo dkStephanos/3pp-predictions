@@ -1,48 +1,57 @@
-from sklearn.svm import LinearSVC
-from sklearn.feature_selection import SelectFromModel
+"""
+File: FeatureSelection.py
+Author: Koi Stephanos
+Date: 2023-12-02
+Description: 
+    This file contains methods for performing feature selection in a regression context.
+    It is designed to identify the most significant features for predicting target variables 
+    in regression models, particularly for analyzing NBA shooting statistics.
+
+Additional Notes:
+    - Depends on scikit-learn for feature selection mechanisms.
+
+Modifications:
+    - [Date]: [Description of modifications, if any]
+
+Copyright:
+    © 2023 Koi Stephanos. All rights reserved.
+    Unauthorized copying of this file, via any medium, is strictly prohibited.
+    Proprietary and confidential.
+"""
+
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LinearRegression
 from code.preprocessing.normalize import normalize_shooting_stats
-from code.constants import NUMERIC_COLS
-from code.utils import project_cols
+from code.constants import TARGET_COL
 import pandas as pd
 
-def perform_feature_selection(
-    C: float = 0.2
-) -> pd.DataFrame:
+def select_features(n_features_to_select=10):
     """
-    Performs feature selection using a Linear Support Vector Classification (LinearSVC) model
-    with L1-based feature selection. This function fits a LinearSVC model to the data, 
-    selects the most important features, and optionally aligns the result with a clustering result.
-    
-    Args:
-        C (float, optional): The regularization parameter for the LinearSVC model. Defaults to 0.001.
-    
-    Returns:
-        pd.DataFrame: A dataframe with selected features, and optionally with cluster labels.
-    """
-    
-    # Normalize input df
-    stats_df = normalize_shooting_stats()
+    Selects the top n features for regression based on Recursive Feature Elimination (RFE).
 
-    # Project the data to the set of numeric columns
-    X = project_cols(stats_df, NUMERIC_COLS)
-    
-    # Get the target variable
-    y = stats_df["win"]
-    
-    # Fit a LinearSVC model with L1 regularization
-    lsvc = LinearSVC(C=C, penalty="l1", dual=False).fit(X, y)
-    
-    # Select features using the fitted model
-    model = SelectFromModel(lsvc, prefit=True)
-    X_new = X.loc[:, model.get_support()]
-    X_new.loc[:, "win"] = y
-    
-    # If a clustering result is provided, align the feature selection result with it
-    if cluster_df is not None:
-        X_new = X_new[X_new.index.isin(cluster_df.index)]
-        X_new['cluster'] = cluster_df['cluster']
-    elif 'cluster' in list(stats_df.columns):
-        # Fall back to original cluster assignement if there
-        X_new.loc[:, 'cluster'] = stats_df['cluster']
-    
-    return X_new
+    Args:
+        n_features_to_select (int): The number of features to select.
+
+    Returns:
+        tuple: A tuple containing a list of top n selected feature names, 
+               and a DataFrame with their rankings and importances.
+    """
+    df = normalize_shooting_stats()
+    X = df.drop(columns=["Name", TARGET_COL])
+    y = df[TARGET_COL]
+
+    model = LinearRegression()
+    rfe = RFE(model, n_features_to_select=n_features_to_select)
+    fit = rfe.fit(X, y)
+
+    # Get selected features
+    selected_features = X.columns[fit.support_]
+    selected_importances = fit.estimator_.coef_
+
+    # Create a DataFrame for selected features
+    feature_info = pd.DataFrame({
+        'Feature': selected_features,
+        'Importance': selected_importances
+    })
+
+    return selected_features.tolist(), feature_info
